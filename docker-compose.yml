@@ -1,19 +1,24 @@
-version: '2'
+version: '3.1'
 
 services:
-  wordpress:
-    image: wordpress:latest
+
+  wp:
+    image: wordpress:5.4.0
+    restart: always
     ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - mysql
+      - 80:80
+      - 443:443
     env_file: .env
     volumes:
-        - ./wp-content:/var/www/html/wp-content
+      - ./:/var/www/html/
+    command: bash -c "/bin/chown -R www-data:www-data /var/www/html && apache2-foreground"
 
-  mysql:
+  db:
     image: mysql:5.7
+    restart: always
     env_file: .env
-    ports:
-      - "3306:3306"
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  db:
